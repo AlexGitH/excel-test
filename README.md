@@ -106,3 +106,128 @@ mutation addCell(
   "exp": null
 }
 ```
+
+### ANOTHER TESTING
+
+``` graphql
+query t {
+  getUsers {
+    id
+    firstName
+    lastName
+    email
+    documents {
+      id name 
+    }
+  }
+}
+mutation vas{
+  updateUser(
+    id: "60a1105851e93124915a4699"
+    # email : "vaska234@gamil.com"
+    # email: "petrov241@gmail.com"
+    email : "viskarik234@gamil.com"
+    
+    # id: "60a03c5ab8ed5a1ffa024f0f"
+    # email : "semenovsky@gmail.com"
+    # firstName : "Semen"
+    # lastName : "Semenovsky"
+    # password : "SecretP@s2992"
+  ){
+    id
+    email
+    login
+  }
+}
+
+mutation docUpd{
+  updateDocument(
+    id : "60a04828f4117e2246240767"
+    # name : "Updated-Test-Excel-02"
+    name : "Test-Excel-02"
+  ){
+    id name 
+  }
+}
+
+query recur(
+  $own: ID!
+){
+  user( id: $own ){
+    login
+    documents {
+      name owner {
+        login documents{
+          name owner {
+            login
+          }
+        }
+      }
+    }
+  }
+}
+
+query docById( $did: ID!){
+  document( id: $did ){
+    name sheets {
+      name cells {
+        value 
+      }
+    }
+  }
+}
+
+mutation addUser(
+  $fn: String!
+  $ln: String!
+  $em: String!
+  $lg: String!
+  $pw: String!) {
+  addUser (
+    firstName:$fn
+    lastName:$ln
+    email:$em
+    login: $lg
+    password: $pw){
+      id, firstName, lastName, email, login
+    }
+}
+
+mutation addDoc(
+  $dcn: String!
+  $own: ID!
+){
+  addDocument( name: $dcn ownerId: $own) {
+    id name owner{
+      firstName lastName
+    }
+  }
+}
+
+mutation addSht(
+  $shn: String!
+  $did: ID!
+){
+  addSheet( name: $shn documentId: $did ){
+    id
+  }
+}
+
+mutation addCell(
+  $row: Int!
+  $col: Int!
+  $val: String
+  $exp: String
+  $sid: ID!
+){
+  addCell(
+    row: $row
+    col: $col
+    value: $val
+    expr: $exp
+    sheetId: $sid
+  ) {
+    id 
+  }
+}
+```
