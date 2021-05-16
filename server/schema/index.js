@@ -9,6 +9,7 @@ const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema, GraphQLID, 
 
 const GraphQLNonNullString = new GraphQLNonNull( GraphQLString )
 const GraphQLNonNullInt = new GraphQLNonNull( GraphQLInt )
+const GraphQLNonNullID = new GraphQLNonNull( GraphQLID )
 
 const UserType = new GraphQLObjectType( {
   name   : 'User',
@@ -167,7 +168,7 @@ const Mutation = new GraphQLObjectType( {
     //   DELETE
     deleteUser : {
       type : UserType,
-      args : { id: { type: GraphQLID } },
+      args : { id: { type: GraphQLNonNullID } },
       resolve( parent_, { id } ) {
         // NOTE: only owner user or admin can perform user removal
         return User.findByIdAndRemove( id );
@@ -175,7 +176,7 @@ const Mutation = new GraphQLObjectType( {
     },
     deleteDocument : {
       type : DocumentType,
-      args : { id: { type: GraphQLID } },
+      args : { id: { type: GraphQLNonNullID } },
       resolve( parent_, { id } ) {
         // NOTE: only owner or admin can perform document removal
         // TODO: deleted document must delete all its sheets
@@ -184,7 +185,7 @@ const Mutation = new GraphQLObjectType( {
     },
     deleteSheet : {
       type : SheetType,
-      args : { id: { type: GraphQLID } },
+      args : { id: { type: GraphQLNonNullID } },
       resolve( parent_, { id } ) {
         // TODO: last sheet cannot be removed
         // TODO: deleted sheet must delete all its cells
@@ -193,7 +194,7 @@ const Mutation = new GraphQLObjectType( {
     },
     deleteCell : {
       type : CellType,
-      args : { id: { type: GraphQLID } },
+      args : { id: { type: GraphQLNonNullID } },
       resolve( parent_, { id } ) {
         // TODO: last sheet cannot be removed
         // TODO: deleted sheet must delete all its cells
