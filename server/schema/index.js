@@ -152,6 +152,44 @@ const Mutation = new GraphQLObjectType( {
         // TODO: check if user have permissions to edit document( owner or editor )
         return cell.save()
       }
+    },
+    //////////////////////////////////////////////////////////////
+    //   DELETE
+    deleteUser : {
+      type : UserType,
+      args : { id: { type: GraphQLID } },
+      resolve( parent_, { id } ) {
+        // NOTE: only owner user or admin can perform user removal
+        return User.findByIdAndRemove( id );
+      }
+    },
+    deleteDocument : {
+      type : DocumentType,
+      args : { id: { type: GraphQLID } },
+      resolve( parent_, { id } ) {
+        // NOTE: only owner or admin can perform document removal
+        // TODO: deleted document must delete all its sheets
+        return Document.findByIdAndRemove( id );
+      }
+    },
+    deleteSheet : {
+      type : SheetType,
+      args : { id: { type: GraphQLID } },
+      resolve( parent_, { id } ) {
+        // TODO: last sheet cannot be removed
+        // TODO: deleted sheet must delete all its cells
+        return Sheet.findByIdAndRemove( id );
+      }
+    },
+    deleteCell : {
+      type : CellType,
+      args : { id: { type: GraphQLID } },
+      resolve( parent_, { id } ) {
+        // TODO: last sheet cannot be removed
+        // TODO: deleted sheet must delete all its cells
+        return Sheet.findByIdAndRemove( id );
+      }
+    },
     }
   }
 } )
