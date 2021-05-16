@@ -97,6 +97,16 @@ const CellType = new GraphQLObjectType( {
   } )
 } )
 
+const updateModel = async( Model, { id, ...rest } ) => {
+  const entity = await Model.findById( id );
+  for ( const key in rest ) {
+    if ( key in entity ) {
+      entity[key] = rest[key];
+    }
+  }
+  return entity.save()
+}
+
 const Mutation = new GraphQLObjectType( {
   name   : 'Mutation',
   fields : {
@@ -190,6 +200,68 @@ const Mutation = new GraphQLObjectType( {
         return Sheet.findByIdAndRemove( id );
       }
     },
+
+    //////////////////////////////////////////////////////////////
+    //   UPDATE
+    updateUser : {
+      type : UserType,
+      args : {
+        id        : { type: GraphQLNonNullID },
+        firstName : { type: GraphQLString },
+        lastName  : { type: GraphQLString },
+        email     : { type: GraphQLString },
+        // login     : { type: GraphQLNonNullString },
+        password  : { type: GraphQLString }
+
+      },
+      // async resolve( parent_, { id, ...rest } ) {
+      async resolve( parent_, args ) {
+        return updateModel( User, args );
+        // const user = await User.findById( id );
+        // for ( const key in rest ) {
+        //   if ( key in user ) {
+        //     user[key] = rest[key];
+        //   }
+        // }
+        // return user.save()
+      }
+    },
+    updateDocument : {
+      type : DocumentType,
+      args : {
+        id      : { type: GraphQLNonNullID },
+        name    : { type: GraphQLString },
+        ownerId : { type: GraphQLID }  // DEBUG:  this option is for testing only
+      },
+      async resolve( parent_, args ) {
+        return updateModel( Document, args );
+      }
+    },
+    updateSheet : {
+      type : SheetType,
+      args : {
+        id   : { type: GraphQLNonNullID },
+        name : { type: GraphQLString }
+      },
+      async resolve( parent_, args ) {
+        return updateModel( Sheet, args );
+      }
+    },
+    updateCell : {
+      type : CellType,
+      args : {
+        id    : { type: GraphQLNonNullID },
+        // NOTE:  row and col are not changeable( history implementation reason );
+        // row     : { type: GraphQLNonNullInt },
+        // col     : { type: GraphQLNonNullInt },
+        value : { type: GraphQLString },
+        expr  : { type: GraphQLString }
+        // NOTE: sheetId is not changeable (history reason)
+        // sheetId : { type: new GraphQLNonNull( GraphQLID ) }
+      },
+      async resolve( parent_, args ) {
+        return updateModel( Cell, args );
+      }
     }
   }
 } )
