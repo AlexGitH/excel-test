@@ -75,12 +75,13 @@ const SheetType = new GraphQLObjectType( {
 const CellType = new GraphQLObjectType( {
   name   : 'Cell',
   fields : () => ( {
-    id    : { type: GraphQLID },
-    row   : { type: GraphQLNonNullInt },
-    col   : { type: GraphQLNonNullInt },
-    value : { type: GraphQLString },
-    expr  : { type: GraphQLString },
-    sheet : {
+    id     : { type: GraphQLID },
+    row    : { type: GraphQLNonNullInt },
+    col    : { type: GraphQLNonNullInt },
+    coords : { type: GraphQLString }, // DEBUG: remove after testing
+    value  : { type: GraphQLString },
+    expr   : { type: GraphQLString },
+    sheet  : {
       type : new GraphQLNonNull( SheetType ),
       resolve( parent, args ) {
         return Sheet.findById( parent.sheetId );
