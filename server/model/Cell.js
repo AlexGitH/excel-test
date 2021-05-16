@@ -12,4 +12,7 @@ const cellSchema = new Schema( {
   // directorId : String
 } )
 
+ // DEBUG: remove after testing
+cellSchema.virtual( 'coords' ).get( function() { return `${this.col}|${this.row}` } )
+
 module.exports = mongoose.model( 'Cell', cellSchema );
