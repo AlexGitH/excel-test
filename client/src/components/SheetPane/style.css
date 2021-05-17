@@ -1,0 +1,4 @@
+.ant-tabs .ant-tabs-content-holder {
+  flex: 1 1 100vh;
+  overflow: auto;
+}
