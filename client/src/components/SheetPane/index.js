@@ -3,6 +3,7 @@ import './style.css'
 import React from 'react'
 import { Tabs } from 'antd';
 import UserInfo from '../UserInfo';
+import EditableTable from '../EditableTableV2';
 
 const { TabPane } = Tabs;
 
@@ -85,7 +86,9 @@ class SheetPane extends React.Component {
           <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
             {/* // <div style={{display: 'flex', flexWrap: 'wrap', overflowX:'scroll'}} > */}
               {/* { Array(300).fill(0).map((x,i)=>(<input key={i} value={pane.content}/>)) } */}
-              <input value={pane.content}/>
+              <EditableTable  key={`tab-${pane.key}`} />
+
+              {/* <input value={pane.content}/> */}
 {/* <button  >{pane.content}</button> */}
             {/* // </div> */}
             {/* {pane.content} */}
