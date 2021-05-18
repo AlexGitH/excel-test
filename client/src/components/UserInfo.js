@@ -41,7 +41,7 @@ import { Avatar, Tooltip } from 'antd';
 const UserInfo = () => (<>
   {/* <Demo /> */}
       <Tooltip title="Ant User" placement="top">
-        <Avatar size="large" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+        <Avatar size="large" alt="Ant User" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
       </Tooltip>
 </>) 
 export default UserInfo
