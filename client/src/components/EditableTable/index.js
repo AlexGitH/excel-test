@@ -1,6 +1,6 @@
 import { Input, Table, Button } from 'antd'
 import React, { useState, useEffect } from 'react'
-import { buildColumn, buildData }  from '../utils/testing/tableGenerator'
+import { buildColumn, buildData }  from '../../utils/testing/tableGenerator'
 
 
 import 'antd/dist/antd.css';
@@ -19,7 +19,7 @@ import './style.css';
 //   goals :  'Some Ikset goal'
 // }]
 
-const dataSource = buildData( 30, 10 );
+const dataSource = buildData( 10, 30 );
 
 const EditableTable = () => {
   const [tableData, setTableData] = useState(dataSource);
@@ -80,9 +80,9 @@ const EditableTable = () => {
         dataSource={tableData}
         pagination={false}
       />
-      <Button type="primary" onClick={()=>console.log('onButtonClick:', 'tableData:', tableData)}>
+      {/* <Button type="primary" onClick={()=>console.log('onButtonClick:', 'tableData:', tableData)}>
         table data
-      </Button>
+      </Button> */}
       </>
       )
   
