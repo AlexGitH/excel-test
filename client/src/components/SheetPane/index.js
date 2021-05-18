@@ -8,7 +8,8 @@ import EditableTable from '../EditableTableV2';
 const { TabPane } = Tabs;
 
 const initialPanes = [
-  ...Array(30).fill(0).map((x,i)=>( x=i+1,{title: `Sheet ${x}`,content: `Content of Sheet ${x}`, key: `${x}`})),
+  ...Array.from({length:30}, (x,i)=>( x=i+1,{title: `Sheet ${x}`,content: `Content of Sheet ${x}`, key: `${x}`}) ),
+  // ...Array(30).fill(0).map((x,i)=>( x=i+1,{title: `Sheet ${x}`,content: `Content of Sheet ${x}`, key: `${x}`})),
   {
     title: 'Sheet N',
     content:'Content of Sheet N',
