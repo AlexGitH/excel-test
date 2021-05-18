@@ -1,21 +1,24 @@
 import { Input, Table, Button } from 'antd'
 import React, { useState, useEffect } from 'react'
+import { buildColumn, buildData }  from '../utils/testing/tableGenerator'
 
 
 import 'antd/dist/antd.css';
 // import SimpleEditableCell from './SimpleEditalbleCell';
 
-const dataSource = [{
-  id: 1,
-  name: 'Akkek',
-  age: 25,
-  goals :  'Some Akkek goal'
-},{
-  id: 2,
-  name: 'Ikset',
-  age: 53,
-  goals :  'Some Ikset goal'
-}]
+// const dataSource = [{
+//   id: 1,
+//   name: 'Akkek',
+//   age: 25,
+//   goals :  'Some Akkek goal'
+// },{
+//   id: 2,
+//   name: 'Ikset',
+//   age: 53,
+//   goals :  'Some Ikset goal'
+// }]
+
+const dataSource = buildData( 30, 10 );
 
 const EditableTable = () => {
   const [tableData, setTableData] = useState(dataSource);
@@ -29,29 +32,35 @@ const EditableTable = () => {
     setTableData(newData);
   }, []);
 
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text, record, index) => (
-        <Input value={text} onChange={onInputChange("name", index)} />
+  // const columns = [
+  //   {
+  //     title: 'Name',
+  //     dataIndex: 'name',
+  //     key: 'name',
+  //     render: (text, record, index) => (
+  //       <Input value={text} onChange={onInputChange("name", index)} />
+  //     )
+  //   },
+  //   {
+  //     title: 'Age',
+  //     dataIndex: 'age',
+  //     key: 'age',
+  //     render: (text, record, index) => (
+  //       <Input value={text} onChange={onInputChange("age", index)} />
+  //       // <Input value={text} onChange={({target:{value}})=>{console.log(index, value)}}/>
+  //     )
+  //   },
+  //   {
+  //     title: 'Goals',
+  //     dataIndex: 'goals',
+  //     key: 'goals'
+  //   }]
+  const columns = Array.from( {length: 30}, (_,i)=>
+      buildColumn( i,(text, record, index) => (
+        // <Input value={text} onChange={onInputChange("name", index)} />
+        <Input value={text} onChange={onInputChange( i, index)} />
       )
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-      render: (text, record, index) => (
-        <Input value={text} onChange={onInputChange("age", index)} />
-        // <Input value={text} onChange={({target:{value}})=>{console.log(index, value)}}/>
-      )
-    },
-    {
-      title: 'Goals',
-      dataIndex: 'goals',
-      key: 'goals'
-    }]
+ ))
 
   const onInputChange = (key, index) => ( e) => {
     const newData = [...tableData];
@@ -63,6 +72,8 @@ const EditableTable = () => {
   return (
     <>
       <Table
+        bordered
+        size="small"
         rowKey="id"
         columns={columns}
         dataSource={tableData}
