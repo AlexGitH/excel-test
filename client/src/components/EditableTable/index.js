@@ -4,6 +4,7 @@ import { buildColumn, buildData }  from '../utils/testing/tableGenerator'
 
 
 import 'antd/dist/antd.css';
+import './style.css';
 // import SimpleEditableCell from './SimpleEditalbleCell';
 
 // const dataSource = [{
