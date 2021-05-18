@@ -3,7 +3,7 @@ import './style.css'
 import React from 'react'
 import { Tabs } from 'antd';
 import UserInfo from '../UserInfo';
-import EditableTable from '../EditableTableV2';
+import EditableTable from '../EditableTable';
 
 const { TabPane } = Tabs;
 
