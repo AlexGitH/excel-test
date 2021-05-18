@@ -10,6 +10,7 @@
  */
 const buildColumn = ( dataIndex, renderFn ) => ( {
   dataIndex,
+  width : '60px',
   title  : dataIndex,
   key    : `col-${dataIndex}`,
   render : ( text, record, index ) => renderFn( text, record, index )
