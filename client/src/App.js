@@ -1,7 +1,5 @@
-// import logo from './logo.svg';
 import DocumentEditor from './components/DocumentEditor'
-// import UserInfo from './components/UserInfo'
-// import './App.css';
+
 
 function App() {
   return (
