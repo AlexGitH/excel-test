@@ -1,0 +1,9 @@
+.ant-table td>input.ant-input {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ant-table .ant-table-tbody .ant-table-row td.ant-table-cell {
+  padding: 1px;
+}
