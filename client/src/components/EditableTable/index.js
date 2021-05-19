@@ -22,13 +22,16 @@ import './style.css';
 
 const dataSource = buildData( 10, 30 );
 
-const EditableTable = () => {
+const EditableTable = (props) => {
   const [tableData, setTableData] = useState(dataSource);
 
   useEffect(() => {
     const newData = [...tableData];
     setTableData(newData);
   }, [] );
+
+  console.log('EditableTable:', 'props:', props);  // DEBUG: remove after testing
+  // console.log('EditableTable:', 'auth:', auth);  // DEBUG: remove after testing
 
   // NOTE: data example
   // const columns = [
