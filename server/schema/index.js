@@ -11,6 +11,14 @@ const GraphQLNonNullString = new GraphQLNonNull( GraphQLString )
 const GraphQLNonNullInt = new GraphQLNonNull( GraphQLInt )
 const GraphQLNonNullID = new GraphQLNonNull( GraphQLID )
 
+const { sign, verify } = require( 'jsonwebtoken' );
+
+const SALT = 'SuperSalt';
+
+// const testToken = sign( { sub: { id: 100500 } }, SALT );
+// console.log( testToken )
+// console.log( verify( testToken, SALT ) )
+
 const UserType = new GraphQLObjectType( {
   name   : 'User',
   fields : () => ( {
@@ -270,6 +278,28 @@ const Mutation = new GraphQLObjectType( {
 const Query = new GraphQLObjectType( {
   name   : 'Query',
   fields : {
+    login : {
+      type : GraphQLString,
+      args : {
+        login    : { type: GraphQLNonNullString },
+        password : { type: GraphQLNonNullString }
+      },
+      async resolve( parent_, { login, password } ) {
+        if ( !login || !password ) return null;
+
+        const user = await User.findOne( { login } );
+        if ( !user ) return null;
+
+        // bcrypt.compare( user.password, password );
+        if ( user.password !== password ) return null
+
+        const token = sign( { sub: { id: user.id, login } }, SALT );
+        // console.log( '==Login:', 'user.id,user.login:', user.id, user.login );
+        // console.log( '=====login:', 'token :', token );
+
+        return token;
+      }
+    },
     user : {
       type : UserType,
       args : { id: { type: GraphQLID } },
