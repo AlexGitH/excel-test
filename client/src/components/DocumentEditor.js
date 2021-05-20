@@ -1,14 +1,12 @@
 // import './style.css'
-import { Avatar, Layout, Menu, Breadcrumb } from 'antd';
+import { Button, Avatar, Layout, Menu } from 'antd';
 import UserInfo from './UserInfo'
 import SheetPane from './SheetPane'
-
-
 
 // const { Header, Content, Footer } = Layout;
 const { Header, Content } = Layout;
 
-const DocumentEditor = () => (
+const DocumentEditor = ( {auth,users, onGetUsers}) => (
   <Layout style={{ height: '100vh' }}>
     {/* <Header style={{ display: 'flex', flexFlow: 'row nowrap',alignItems: 'center', position: 'fixed', zIndex: 1, width: '100%' }}> */}
     <Header style={{ display: 'flex', flexFlow: 'row nowrap',alignItems: 'center', zIndex: 1, width: '100%' }}>
@@ -19,6 +17,7 @@ const DocumentEditor = () => (
         <Menu.Item key="2">nav 2</Menu.Item>
         <Menu.Item key="3">nav 3</Menu.Item>
       </Menu>
+      <Button onClick={async()=>{await onGetUsers(); console.log('DOcuemntEditor:', 'users:', users); }}>GetUsers</Button>
     </Header>
     {/* <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}> */}
     {/* <Content style={{display:'flex', flex: '1 1 300', flexFlow: 'column nowrap', }} className="site-layout" > */}
