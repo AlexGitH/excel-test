@@ -3,8 +3,8 @@ const app = express()
 const mongoose = require( 'mongoose' )
 const { graphqlHTTP } = require( 'express-graphql' );
 
-const port = 3001 // common express port;
-// const port = 3000 // use graphiql on react port for testing queries
+// const port = 3001 // common express port;
+const port = 3000 // use graphiql on react port for testing queries
 
 const schema = require( './schema' );
 
