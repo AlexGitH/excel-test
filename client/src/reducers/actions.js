@@ -69,6 +69,28 @@ const actionFullRegister = ( login, password )=>async dispatch=>{
   }
 }
 
+
+// testAction
+const actionGetUsers = () => {
+  const query = {};
+  const promise = gql(`query {
+    getUsers {
+      id
+      firstName
+      lastName
+      documents {
+        id name sheets {
+          id name cells { 
+            id
+            value
+          }
+        }
+      }
+    }
+  }`,query)
+  return actionPromise('users', promise)
+}
+
 export {
   // actionPromise,
   actionLogin,
@@ -77,4 +99,6 @@ export {
   actionFullLogin,
   actionRegister,
   actionFullRegister,
+  // NOTE: TESTS 
+  actionGetUsers,
 }
