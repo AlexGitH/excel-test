@@ -131,6 +131,23 @@ const updateModel = async( Model, { id, ...rest } ) => {
 const Mutation = new GraphQLObjectType( {
   name   : 'Mutation',
   fields : {
+    register : {
+      type : UserType,
+      args : {
+        firstName : { type: GraphQLNonNullString },
+        lastName  : { type: GraphQLNonNullString },
+        email     : { type: GraphQLNonNullString },
+        login     : { type: GraphQLNonNullString },
+        password  : { type: GraphQLNonNullString }
+
+      },
+      resolve( parent_, { firstName, lastName, email, login, password }, req ) {
+        if ( getUserByRequest( req ) ) return null;
+
+        const user = new User( { firstName, lastName, email, login, password } )
+        return user.save()
+      }
+    },
     addUser : {
       type : UserType,
       args : {
@@ -351,8 +368,8 @@ const Query = new GraphQLObjectType( {
       type : new GraphQLList( UserType ),
       // DEBUG: test authorization
       resolve( parent_, args_, req ) {
-        const user = getUserByRequest( req )
-        console.log( 'getUsers auth', user.login )
+        // const user = getUserByRequest( req )
+        // console.log( 'getUsers auth', user.login )
         return User.find( {} );
       }
     },
