@@ -268,20 +268,30 @@ const Mutation = new GraphQLObjectType( {
         return updateModel( Sheet, args );
       }
     },
+    // TODO: think how to updateCell(if it does not exist )
     updateCell : {
       type : CellType,
       args : {
-        id    : { type: GraphQLNonNullID },
+        id         : { type: GraphQLNonNullID },
+        documentId : { type: GraphQLNonNullID },
         // NOTE:  row and col are not changeable( history implementation reason );
         // row     : { type: GraphQLNonNullInt },
         // col     : { type: GraphQLNonNullInt },
-        value : { type: GraphQLString },
-        expr  : { type: GraphQLString }
+      value      : { type: GraphQLString },
+        expr       : { type: GraphQLString }
         // NOTE: sheetId is not changeable (history reason)
         // sheetId : { type: new GraphQLNonNull( GraphQLID ) }
       },
-      async resolve( parent_, args ) {
-        return updateModel( Cell, args );
+      async resolve( parent_, { documentId, ...args }, req ) {
+        const user = await getUserByRequest( req );
+        const document = await Document.findById( documentId );
+        // console.log('updateCell:', 'user.login:', user.login);
+        // console.log('updateCell:', 'user.id,document.ownerId:', user.id,document.ownerId);
+        // console.log('updateCell:', 'userId===document.ownerId:', user.id===document.ownerId);
+        if ( user && document && document.ownerId === user.id ) {  //document.editors contains user.id
+          return updateModel( Cell, args );
+        }
+        return null;
       }
     }
   }
