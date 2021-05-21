@@ -15,9 +15,21 @@ const { sign, verify } = require( 'jsonwebtoken' );
 
 const SALT = 'SuperSalt';
 
-// const testToken = sign( { sub: { id: 100500 } }, SALT );
-// console.log( testToken )
-// console.log( verify( testToken, SALT ) )
+// NOTE: this function is not about get user to frontend, but it returns it to front end
+function getUserByRequest( req ) {
+  const authorization = req?.headers?.authorization;
+  if ( !authorization ) return null;
+  if ( !authorization.startsWith( 'Bearer ' ) ) return null;
+  const token = authorization.slice( 'Bearer '.length );
+  try {
+    const decoded = verify( token, SALT )
+    // console.log( 'getUserByRequest:', 'decoded:', decoded ); // DEBUG:
+    const userId = decoded.sub.id;
+    return User.findById( userId );
+  } catch ( e ) {
+    return null;
+  }
+}
 
 const UserType = new GraphQLObjectType( {
   name   : 'User',
