@@ -316,9 +316,6 @@ const Query = new GraphQLObjectType( {
         if ( user.password !== password ) return null
 
         const token = sign( { sub: { id: user.id, login } }, SALT );
-        // console.log( '==Login:', 'user.id,user.login:', user.id, user.login );
-        // console.log( '=====login:', 'token :', token );
-
         return token;
       }
     },
@@ -352,7 +349,10 @@ const Query = new GraphQLObjectType( {
     },
     getUsers : {
       type : new GraphQLList( UserType ),
-      resolve( parent_, args_ ) {
+      // DEBUG: test authorization
+      resolve( parent_, args_, req ) {
+        const user = getUserByRequest( req )
+        console.log( 'getUsers auth', user.login )
         return User.find( {} );
       }
     },
