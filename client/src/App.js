@@ -7,6 +7,9 @@ import {actionGetUsers} from './reducers/actions';
 //   actionAuthLogin,
 // } from './reducers/actions'
 import DocumentEditor from './components/DocumentEditor'
+import NormalLoginForm from './components/LoginForm';
+import { Row, Col } from 'antd';
+// import Layout from 'antd/lib/layout/layout';
 
 // NOTE: for testing only
 const CDocumentEditor = connect(state=>({
@@ -21,7 +24,15 @@ function App() {
     <Provider store={store}>
       <div className="App">
         {/* <UserInfo /> */}
-        <CDocumentEditor />
+        <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
+          <Col span={8} >
+
+            <NormalLoginForm />
+
+          </Col>
+        </Row>
+
+        {/* <CDocumentEditor /> */}
       </div>
     </Provider>
   );
