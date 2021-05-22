@@ -42,19 +42,28 @@ const actionFullLogin = ( login, password )=>async dispatch=>{
 }
 
 // register
-const actionRegister = (login,password) => {
-  const query = {login,password};
-  const promise = gql(`mutation ($login:String!, $password:String!) {
-                        register( user:{login:$login,password:$password}){
-                          id, createdAt login nick
-                        }
-                      }`,query)
+const actionRegister = (firstName,lastName,email,login,password) => {
+  const query = {firstName,lastName,email,login,password};
+  const promise = gql(`
+    mutation reg($firstName:String!,$lastName:String!,$email:String!, $login:String!, $password:String!){
+    register(
+      firstName: $firstName
+      lastName: $lastName
+      email: $email
+      login: $login
+      password: $password
+    ){
+      id login
+    }
+  }
+  `, query );
+
   return actionPromise('register', promise)
 }
 
-const actionFullRegister = ( login, password )=>async dispatch=>{
+const actionFullRegister = ( firstName,lastName,email,login,password )=>async dispatch=>{
   try {
-    const payload = await dispatch( actionRegister(login, password) )
+    const payload = await dispatch( actionRegister(firstName,lastName,email,login,password ) )
     console.log('authFullRegister payload ', payload )
     if ( !payload ) return; 
     const {error} = payload;
