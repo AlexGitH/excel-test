@@ -20,7 +20,7 @@ const actionPromise = ( name = 'default', p = Promise.resolve() ) =>
 // login/logout
 const actionLogin = (login,password) => {
   const query = {login,password};
-  const promise = gql(`query ($login:String, $password:String) {
+  const promise = gql(`query ($login:String!, $password:String!) {
                         login(login:$login, password:$password)
                       }`,query)
   return actionPromise('login', promise)
