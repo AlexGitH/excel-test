@@ -7,9 +7,10 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 //   wrapperCol: { span: 16 },
 // };
 
-const NormalLoginForm = () => {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+const NormalLoginForm = ({onLogin}) => {
+  const onFinish = ({login,password}) => {
+    console.log('Received values of form: ', {login,password});
+    onLogin( login,password );
   };
 
   return (
@@ -26,7 +27,7 @@ const NormalLoginForm = () => {
       onFinish={onFinish}
     >
       <Form.Item
-        name="username"
+        name="login"
         rules={[
           {
             required: true,
@@ -56,13 +57,13 @@ const NormalLoginForm = () => {
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
 
-        <a className="login-form-forgot" alt="forgot password" href="#">
+        {/* <a className="login-form-forgot" alt="forgot password" href="#">
           Forgot password
-        </a>
+        </a> */}
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
+        <Button style={{width:'100%'}} type="primary" htmlType="submit" className="login-form-button">
           Log in
         </Button>
         Or <a alt="register" href="#">register now!</a>
