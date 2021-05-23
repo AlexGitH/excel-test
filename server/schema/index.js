@@ -141,8 +141,15 @@ const Mutation = new GraphQLObjectType( {
         password  : { type: GraphQLNonNullString }
 
       },
-      resolve( parent_, { firstName, lastName, email, login, password }, req ) {
+      // TODO: check user existence during registration with "email", or "login" password
+      async resolve( parent_, { firstName, lastName, email, login, password }, req ) {
         if ( getUserByRequest( req ) ) return null;
+
+        const existingUser = await User.findOne( { $or: [ { email }, { login } ] } )
+        if ( existingUser ) {
+          console.log( 'USER EXISTS:', 'existingUser', existingUser );
+          return null;
+        }
 
         const user = new User( { firstName, lastName, email, login, password } )
         return user.save()
