@@ -18,7 +18,10 @@
     "express-graphql": "^0.12.0",
     "graphql": "^15.5.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.9"
+    "mongoose": "^5.12.9",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
