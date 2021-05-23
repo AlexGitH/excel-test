@@ -11,6 +11,26 @@ const GraphQLNonNullString = new GraphQLNonNull( GraphQLString )
 const GraphQLNonNullInt = new GraphQLNonNull( GraphQLInt )
 const GraphQLNonNullID = new GraphQLNonNull( GraphQLID )
 
+const { sign, verify } = require( 'jsonwebtoken' );
+
+const SALT = 'SuperSalt';
+
+// NOTE: this function is not about get user to frontend, but it returns it to front end
+function getUserByRequest( req ) {
+  const authorization = req?.headers?.authorization;
+  if ( !authorization ) return null;
+  if ( !authorization.startsWith( 'Bearer ' ) ) return null;
+  const token = authorization.slice( 'Bearer '.length );
+  try {
+    const decoded = verify( token, SALT )
+    // console.log( 'getUserByRequest:', 'decoded:', decoded ); // DEBUG:
+    const userId = decoded.sub.id;
+    return User.findById( userId );
+  } catch ( e ) {
+    return null;
+  }
+}
+
 const UserType = new GraphQLObjectType( {
   name   : 'User',
   fields : () => ( {
@@ -111,6 +131,23 @@ const updateModel = async( Model, { id, ...rest } ) => {
 const Mutation = new GraphQLObjectType( {
   name   : 'Mutation',
   fields : {
+    register : {
+      type : UserType,
+      args : {
+        firstName : { type: GraphQLNonNullString },
+        lastName  : { type: GraphQLNonNullString },
+        email     : { type: GraphQLNonNullString },
+        login     : { type: GraphQLNonNullString },
+        password  : { type: GraphQLNonNullString }
+
+      },
+      resolve( parent_, { firstName, lastName, email, login, password }, req ) {
+        if ( getUserByRequest( req ) ) return null;
+
+        const user = new User( { firstName, lastName, email, login, password } )
+        return user.save()
+      }
+    },
     addUser : {
       type : UserType,
       args : {
@@ -248,20 +285,30 @@ const Mutation = new GraphQLObjectType( {
         return updateModel( Sheet, args );
       }
     },
+    // TODO: think how to updateCell(if it does not exist )
     updateCell : {
       type : CellType,
       args : {
-        id    : { type: GraphQLNonNullID },
+        id         : { type: GraphQLNonNullID },
+        documentId : { type: GraphQLNonNullID },
         // NOTE:  row and col are not changeable( history implementation reason );
         // row     : { type: GraphQLNonNullInt },
         // col     : { type: GraphQLNonNullInt },
-        value : { type: GraphQLString },
-        expr  : { type: GraphQLString }
+      value      : { type: GraphQLString },
+        expr       : { type: GraphQLString }
         // NOTE: sheetId is not changeable (history reason)
         // sheetId : { type: new GraphQLNonNull( GraphQLID ) }
       },
-      async resolve( parent_, args ) {
-        return updateModel( Cell, args );
+      async resolve( parent_, { documentId, ...args }, req ) {
+        const user = await getUserByRequest( req );
+        const document = await Document.findById( documentId );
+        // console.log('updateCell:', 'user.login:', user.login);
+        // console.log('updateCell:', 'user.id,document.ownerId:', user.id,document.ownerId);
+        // console.log('updateCell:', 'userId===document.ownerId:', user.id===document.ownerId);
+        if ( user && document && document.ownerId === user.id ) {  //document.editors contains user.id
+          return updateModel( Cell, args );
+        }
+        return null;
       }
     }
   }
@@ -270,6 +317,25 @@ const Mutation = new GraphQLObjectType( {
 const Query = new GraphQLObjectType( {
   name   : 'Query',
   fields : {
+    login : {
+      type : GraphQLString,
+      args : {
+        login    : { type: GraphQLNonNullString },
+        password : { type: GraphQLNonNullString }
+      },
+      async resolve( parent_, { login, password } ) {
+        if ( !login || !password ) return null;
+
+        const user = await User.findOne( { login } );
+        if ( !user ) return null;
+
+        // bcrypt.compare( user.password, password );
+        if ( user.password !== password ) return null
+
+        const token = sign( { sub: { id: user.id, login } }, SALT );
+        return token;
+      }
+    },
     user : {
       type : UserType,
       args : { id: { type: GraphQLID } },
@@ -300,7 +366,10 @@ const Query = new GraphQLObjectType( {
     },
     getUsers : {
       type : new GraphQLList( UserType ),
-      resolve( parent_, args_ ) {
+      // DEBUG: test authorization
+      resolve( parent_, args_, req ) {
+        // const user = getUserByRequest( req )
+        // console.log( 'getUsers auth', user.login )
         return User.find( {} );
       }
     },
