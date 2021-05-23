@@ -22,7 +22,13 @@ import './style.css';
 
 const dataSource = buildData( 10, 30 );
 
-const EditableTable = (props) => {
+const CustomInput = () => {
+  const [text, setText] = useState(null)
+
+  return <Input value={text} onChange={({target:{value}})=>setText(value)} />
+}
+
+const EditableTable = React.memo( (props) => {
   const [tableData, setTableData] = useState(dataSource);
 
   useEffect(() => {
@@ -45,15 +51,17 @@ const EditableTable = (props) => {
   //   }]
   const columns = Array.from( {length: 30}, (_,i)=>
       buildColumn( i,(text, record, index) => (
-        <Input value={text} onChange={onInputChange( i, index)} />
+        <CustomInput/>
+        // <Input value={text} onChange={onInputChange( i, index)} />
       )
  ))
 
-  const onInputChange = (key, index) => ( e) => {
-    const newData = [...tableData];
-    newData[index][key] = e.target.value;
-    setTableData(newData);
-  };
+ // TODO: create new cell updating mechanism
+  // const onInputChange = (key, index) => ( e) => {
+  //   const newData = [...tableData];
+  //   newData[index][key] = e.target.value;
+  //   setTableData(newData);
+  // };
 
   return (
       <Table
@@ -66,6 +74,6 @@ const EditableTable = (props) => {
       />
       )
   
-}
+})
 
 export default EditableTable
