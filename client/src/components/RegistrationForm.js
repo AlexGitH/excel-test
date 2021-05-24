@@ -37,10 +37,14 @@ const RegistrationForm = ({onRegister}) => {
     console.log('Received values of form: ', {firstName,lastName,email,login,password}); // DEBUG:
   };
 
+  window.TF = form ;// DEBUG: 
+
   return (
     <Card>
     <Form
       {...formItemLayout}
+      labelAlign="left"
+      size="large"
       form={form}
       name="register"
       onFinish={onFinish}
