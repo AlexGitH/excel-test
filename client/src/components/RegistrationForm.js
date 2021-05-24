@@ -1,12 +1,11 @@
-import React from 'react';
-import { Form, Input, Button, } from 'antd';
+import { Form, Input, Button, Card, } from 'antd';
 const formItemLayout = {
   labelCol: {
     xs: {
       span: 24,
     },
     sm: {
-      span: 8,
+      span: 6,
     },
   },
   wrapperCol: {
@@ -14,20 +13,17 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 16,
+      span: 18,
     },
   },
 };
 const tailFormItemLayout = {
+  // style : {
+  //   width: '100%'
+  // },
   wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
+    span : 24,
+    offset: 0,
   },
 };
 
@@ -40,6 +36,7 @@ const RegistrationForm = ({onRegister}) => {
   };
 
   return (
+    <Card>
     <Form
       {...formItemLayout}
       form={form}
@@ -158,6 +155,8 @@ const RegistrationForm = ({onRegister}) => {
         </Button>
       </Form.Item>
     </Form>
+
+    </Card>
   );
 };
 
