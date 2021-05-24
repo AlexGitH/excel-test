@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, } from 'antd';
 const formItemLayout = {
   labelCol: {
@@ -18,9 +19,6 @@ const formItemLayout = {
   },
 };
 const tailFormItemLayout = {
-  // style : {
-  //   width: '100%'
-  // },
   wrapperCol: {
     span : 24,
     offset: 0,
@@ -30,6 +28,14 @@ const tailFormItemLayout = {
 const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
 const RegistrationForm = ({onRegister}) => {
+
+  const [, forceUpdate] = useState({});
+
+  // To disable submit button at the beginning.
+  useEffect(() => {
+    forceUpdate({});
+  }, []);
+
   const [form] = Form.useForm();
 
   const onFinish = ({firstName,lastName,email,login,password}) => {
@@ -166,10 +172,41 @@ const RegistrationForm = ({onRegister}) => {
 
       <Form.Item 
         key="r6"
+        shouldUpdate   // to disable button on validation fail
       {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
+      { ({ isFieldsTouched, getFieldsError, setFieldsValue, resetFields })=>    // NOTE: form destructuring
+          <>
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={ 
+                !isFieldsTouched(true) ||
+                !!getFieldsError().filter(({ errors }) => errors.length).length
+              }>
+                Register
+            </Button>
+
+            {/* // DEBUG: for testing only */}
+            <Button type="link" htmlType="button" onClick={()=>{
+                  setFieldsValue({
+                    firstName: 'Vasya',
+                    lastName: 'Pupkin',
+                    email: 'pupkinvasya3124@test.com',
+                    password: 'Asdfasdf2!',
+                    confirm: 'Asdfasdf2!',
+                    login: 'vpup223',
+                  });
+              
+            }}>
+              Fill test data
+            </Button>
+
+            <Button type="ghost" htmlType="button" onClick={()=>resetFields()}>
+              Reset
+            </Button>
+      </>
+      }
+
       </Form.Item>
     </Form>
 
