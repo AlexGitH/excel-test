@@ -27,6 +27,8 @@ const tailFormItemLayout = {
   },
 };
 
+const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
+
 const RegistrationForm = ({onRegister}) => {
   const [form] = Form.useForm();
 
@@ -94,11 +96,21 @@ const RegistrationForm = ({onRegister}) => {
         key="r3"
         name="password"
         label="Password"
+        validateFirst    // stop validating on first error
         rules={[
           {
             required: true,
             message: 'Please input your password!',
             // TODO: create password character validator
+          },
+          {
+            min: 8,
+            message : 'Password must be at least 8 characters long',
+          },
+          {
+            pattern: rePassword,
+            // message: 'Password must be at least 8 characters long with numbers, latin letters(both cases) and special characters',
+            message: 'Use numbers, latin letters(both cases) and special characters',
           },
         ]}
         hasFeedback
@@ -112,6 +124,7 @@ const RegistrationForm = ({onRegister}) => {
         label="Confirm Password"
         dependencies={['password']}
         hasFeedback
+        validateFirst
         rules={[
           {
             required: true,
