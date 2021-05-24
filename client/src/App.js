@@ -40,8 +40,10 @@ function App() {
     <Provider store={store}>
       <div className="App">
         {/* <UserInfo /> */}
-        <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
-          <Col span={8} >
+        {/* <Row justify="center" align="middle" style={{ minHeight: '100vh' }}> */}
+        <Row justify="center" style={{ minHeight: '100vh' }}>
+          {/* <Col span={8} > */}
+          <Col xs={24} sm={22} md={18} lg={16} xl={12} >
 
             {/* <CNormalLoginForm /> */}
             <CRegistrationForm />

@@ -1,49 +1,11 @@
-import React, { useState } from 'react';
-import { Form, Input, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
-import { actionFullRegister } from '../reducers/actions'
-import store from '../reducers/store';
-// const { Option } = Select;
-// const residences = [
-//   {
-//     value: 'zhejiang',
-//     label: 'Zhejiang',
-//     children: [
-//       {
-//         value: 'hangzhou',
-//         label: 'Hangzhou',
-//         children: [
-//           {
-//             value: 'xihu',
-//             label: 'West Lake',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     value: 'jiangsu',
-//     label: 'Jiangsu',
-//     children: [
-//       {
-//         value: 'nanjing',
-//         label: 'Nanjing',
-//         children: [
-//           {
-//             value: 'zhonghuamen',
-//             label: 'Zhong Hua Men',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
+import { Form, Input, Button, Card, } from 'antd';
 const formItemLayout = {
   labelCol: {
     xs: {
       span: 24,
     },
     sm: {
-      span: 8,
+      span: 6,
     },
   },
   wrapperCol: {
@@ -51,82 +13,52 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 16,
+      span: 18,
     },
   },
 };
 const tailFormItemLayout = {
+  // style : {
+  //   width: '100%'
+  // },
   wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
+    span : 24,
+    offset: 0,
   },
 };
+
+const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
 const RegistrationForm = ({onRegister}) => {
   const [form] = Form.useForm();
 
   const onFinish = ({firstName,lastName,email,login,password}) => {
-    // store.dispatch( actionFullRegister({
     onRegister( firstName,lastName, email, login, password )
-    console.log('Received values of form: ', {firstName,lastName,email,login,password});
+    console.log('Received values of form: ', {firstName,lastName,email,login,password}); // DEBUG:
   };
 
-  // const prefixSelector = (
-  //   <Form.Item name="prefix" noStyle>
-  //     <Select
-  //       style={{
-  //         width: 70,
-  //       }}
-  //     >
-  //       <Option value="86">+86</Option>
-  //       <Option value="87">+87</Option>
-  //     </Select>
-  //   </Form.Item>
-  // );
+  window.TF = form ;// DEBUG: 
 
-  // const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-
-  // const onWebsiteChange = (value) => {
-  //   if (!value) {
-  //     setAutoCompleteResult([]);
-  //   } else {
-  //     setAutoCompleteResult(['.com', '.org', '.net'].map((domain) => `${value}${domain}`));
-  //   }
-  // };
-
-  // const websiteOptions = autoCompleteResult.map((website) => ({
-  //   label: website,
-  //   value: website,
-  // }));
   return (
+    <Card>
     <Form
       {...formItemLayout}
+      labelAlign="left"
+      size="large"
       form={form}
       name="register"
       onFinish={onFinish}
-      // initialValues={{
-      //   residence: ['zhejiang', 'hangzhou', 'xihu'],
-      //   prefix: '86',
-      // }}
       scrollToFirstError
     >
       <Form.Item
         key="r0"
         name="firstName"
         label="First Name"
-        // tooltip="What do you want others to call you?"
         rules={[
           {
             required: true,
             message: 'Please input your first name!',
             whitespace: true,
-            // whitespace: false,
           },
         ]}
       >
@@ -136,13 +68,11 @@ const RegistrationForm = ({onRegister}) => {
         key="r1"
         name="lastName"
         label="Last Name"
-        // tooltip="What do you want others to call you?"
         rules={[
           {
             required: true,
             message: 'Please input your last name!',
             whitespace: true,
-            // whitespace: false,
           },
         ]}
       >
@@ -170,11 +100,21 @@ const RegistrationForm = ({onRegister}) => {
         key="r3"
         name="password"
         label="Password"
+        validateFirst    // stop validating on first error
         rules={[
           {
             required: true,
             message: 'Please input your password!',
             // TODO: create password character validator
+          },
+          {
+            min: 8,
+            message : 'Password must be at least 8 characters long',
+          },
+          {
+            pattern: rePassword,
+            // message: 'Password must be at least 8 characters long with numbers, latin letters(both cases) and special characters',
+            message: 'Use numbers, latin letters(both cases) and special characters',
           },
         ]}
         hasFeedback
@@ -188,6 +128,7 @@ const RegistrationForm = ({onRegister}) => {
         label="Confirm Password"
         dependencies={['password']}
         hasFeedback
+        validateFirst
         rules={[
           {
             required: true,
@@ -216,7 +157,6 @@ const RegistrationForm = ({onRegister}) => {
           {
             required: true,
             message: 'Please input your nickname!',
-            // whitespace: true,
             whitespace: false,
           },
         ]}
@@ -224,90 +164,6 @@ const RegistrationForm = ({onRegister}) => {
         <Input />
       </Form.Item>
 
-      {/* <Form.Item
-        name="residence"
-        label="Habitual Residence"
-        rules={[
-          {
-            type: 'array',
-            required: true,
-            message: 'Please select your habitual residence!',
-          },
-        ]}
-      >
-        <Cascader options={residences} />
-      </Form.Item> */}
-
-      {/* <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your phone number!',
-          },
-        ]}
-      >
-        <Input
-          addonBefore={prefixSelector}
-          style={{
-            width: '100%',
-          }}
-        />
-      </Form.Item> */}
-
-      {/* <Form.Item
-        name="website"
-        label="Website"
-        rules={[
-          {
-            required: true,
-            message: 'Please input website!',
-          },
-        ]}
-      >
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder="website">
-          <Input />
-        </AutoComplete>
-      </Form.Item> */}
-
-      {/* <Form.Item label="Captcha" extra="We must make sure that your are a human.">
-        <Row gutter={8}>
-          <Col span={12}>
-            <Form.Item
-              name="captcha"
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the captcha you got!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Button>Get captcha</Button>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item
-        name="agreement"
-        valuePropName="checked"
-        rules={[
-          {
-            validator: (_, value) =>
-              value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-          },
-        ]}
-        {...tailFormItemLayout}
-      >
-        <Checkbox>
-          I have read the <a href="">agreement</a>
-        </Checkbox>
-      </Form.Item> */}
       <Form.Item 
         key="r6"
       {...tailFormItemLayout}>
@@ -316,8 +172,9 @@ const RegistrationForm = ({onRegister}) => {
         </Button>
       </Form.Item>
     </Form>
+
+    </Card>
   );
 };
 
-// ReactDOM.render(<RegistrationForm />, mountNode);
 export default RegistrationForm;
