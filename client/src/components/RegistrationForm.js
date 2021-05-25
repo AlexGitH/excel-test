@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, } from 'antd';
+import gql from '../utils/gql';
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -25,11 +26,20 @@ const tailFormItemLayout = {
   },
 };
 
+const getUserIdByName = ( login )=> {
+  const params = { login }
+  const prom = gql( `
+    query us($login:String $id:ID){
+      user(login: $login id:$id){
+        id
+      }
+    }`, params )
+  return prom;
+}
+
 const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
 // DEBUG: 
-
-const delay = ms=>new Promise( ok=>setTimeout(_=>ok(ms), ms) )
 
 const RegistrationForm = ({onRegister}) => {
 
@@ -171,9 +181,11 @@ const RegistrationForm = ({onRegister}) => {
             message: 'Please input your nickname!',
             whitespace: false,
           },
-          ({ getFieldValue }) => ({
+          () => ({
             validator(_, value) {
-              return delay( 1000 ).then(x=>Promise.reject(new Error('FAIL!')));
+              return getUserIdByName( value ).then( x => !x
+                                                    ? Promise.resolve()
+                                                    : Promise.reject(new Error('Username is not available!')));
             },
           }),
         ]}
