@@ -216,6 +216,16 @@ const RegistrationForm = ({onRegister}) => {
             <Button type="ghost" htmlType="button" onClick={()=>resetFields()}>
               Reset
             </Button>
+
+            <Button type="ghost" htmlType="button"
+              onClick={async()=>{
+                const login = 'bc123x'
+                const result = await getUserIdByName( login );
+                console.log('T1:', 'result:', result);
+
+              }}>
+              T1
+            </Button>
       </>
       }
 
