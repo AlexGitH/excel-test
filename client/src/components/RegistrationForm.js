@@ -27,6 +27,10 @@ const tailFormItemLayout = {
 
 const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
+// DEBUG: 
+
+const delay = ms=>new Promise( ok=>setTimeout(_=>ok(ms), ms) )
+
 const RegistrationForm = ({onRegister}) => {
 
   const [, forceUpdate] = useState({});
@@ -159,12 +163,19 @@ const RegistrationForm = ({onRegister}) => {
         name="login"
         label="Nickname"
         tooltip="What do you want others to call you?"
+        hasFeedback
+        validateFirst
         rules={[
           {
             required: true,
             message: 'Please input your nickname!',
             whitespace: false,
           },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              return delay( 1000 ).then(x=>Promise.reject(new Error('FAIL!')));
+            },
+          }),
         ]}
       >
         <Input />
@@ -174,13 +185,14 @@ const RegistrationForm = ({onRegister}) => {
         key="r6"
         shouldUpdate   // to disable button on validation fail
       {...tailFormItemLayout}>
-      { ({ isFieldsTouched, getFieldsError, setFieldsValue, resetFields })=>    // NOTE: form destructuring
+      { ({ isFieldsTouched, isFieldsValidating, getFieldsError, setFieldsValue, resetFields })=>    // NOTE: form destructuring
           <>
             <Button
               type="primary"
               htmlType="submit"
               disabled={ 
                 !isFieldsTouched(true) ||
+                isFieldsValidating() ||
                 !!getFieldsError().filter(({ errors }) => errors.length).length
               }>
                 Register
