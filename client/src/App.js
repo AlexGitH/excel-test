@@ -28,11 +28,9 @@ const CNormalLoginForm= connect(state=>({
 }))(NormalLoginForm);
 
 
-const CRegistrationForm= connect(state=>({
-  auth: state.promise.auth?.payload,
-  users: state.promise.users?.payload,
-}), dispatch=>({
-  onRegister : (  firstName,lastName, email, login, password )=>dispatch( actionFullRegister( firstName,lastName, email, login, password ) )
+const CRegistrationForm= connect( null, dispatch=>({
+  onRegister : ( firstName,lastName, email, login, password )=>
+                dispatch( actionFullRegister( firstName,lastName, email, login, password ) )
 }))(RegistrationForm);
 
 function App() {
