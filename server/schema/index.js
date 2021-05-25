@@ -345,9 +345,14 @@ const Query = new GraphQLObjectType( {
     },
     user : {
       type : UserType,
-      args : { id: { type: GraphQLID } },
-      resolve( parent_, args ) {
-        return User.findById( args.id );
+      args : {
+        id    : { type: GraphQLID },
+        login : { type: GraphQLString }
+      },
+      resolve( parent_, { id, login } ) {
+        return id
+                 ? User.findById( id )
+                 : login ? User.findOne( { login } ) : null;
       }
     },
     document : {
