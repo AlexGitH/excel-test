@@ -40,6 +40,7 @@ const getUserIdByName = ( login )=> {
 const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
 // DEBUG: 
+// const delay = ms =>new Promise( ok => setTimeout( () => ok( ms ), ms ) )
 
 const RegistrationForm = ({onRegister}) => {
 
