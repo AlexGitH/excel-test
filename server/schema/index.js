@@ -350,7 +350,7 @@ const Query = new GraphQLObjectType( {
         return token;
       }
     },
-    isNewUserNameValid : {
+    isLoginAvailable : {
       type : GraphQLBoolean,
       args : {
         login : { type: GraphQLNonNullString }
