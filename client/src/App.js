@@ -42,8 +42,10 @@ function App() {
         <Row justify="center" style={{ minHeight: '100vh' }}>
           {/* <Col span={8} > */}
           <Col xs={24} sm={22} md={18} lg={16} xl={12} >
+            {/* <h1 align="center" > Login </h1>
+            <CNormalLoginForm /> */}
 
-            {/* <CNormalLoginForm /> */}
+            <h1 align="center" > Registration </h1>
             <CRegistrationForm />
 
           </Col>
