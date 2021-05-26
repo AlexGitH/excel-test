@@ -26,13 +26,35 @@ const tailFormItemLayout = {
   },
 };
 
-const getUserIdByName = ( login )=> {
+const debounce = ( func, wait, timeout=null ) =>
+  (...args) => {
+    const later = function() {
+      timeout = null;
+      func(...args)
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+
+// function debounce(func, wait) {
+//   let timeout;
+//   return function() {
+//     const context = this;
+//     const args = arguments;
+//     const later = function() {
+//       timeout = null;
+//       func.apply(context, args);
+//     };
+//     clearTimeout(timeout);
+//     timeout = setTimeout(later, wait);
+//   };
+// };
+
+const isNewUserNameValid = ( login )=> {
   const params = { login }
   const prom = gql( `
-    query us($login:String $id:ID){
-      user(login: $login id:$id){
-        id
-      }
+    query ($login:String!){
+      isLoginAvailable ( login: $login )
     }`, params )
   return prom;
 }
@@ -183,8 +205,8 @@ const RegistrationForm = ({onRegister}) => {
             whitespace: false,
           },
           () => ({
-            validator(_, value) {
-              return getUserIdByName( value ).then( x => !x
+            validator(_, userName) {
+              return isNewUserNameValid( userName ).then( x => x
                                                     ? Promise.resolve()
                                                     : Promise.reject(new Error('Username is not available!')));
             },
@@ -233,7 +255,7 @@ const RegistrationForm = ({onRegister}) => {
             <Button type="ghost" htmlType="button"
               onClick={async()=>{
                 const login = 'bc123x'
-                const result = await getUserIdByName( login );
+                const result = await isNewUserNameValid( login );
                 console.log('T1:', 'result:', result);
 
               }}>
