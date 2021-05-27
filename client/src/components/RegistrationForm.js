@@ -1,5 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, } from 'antd';
+import gql from '../utils/gql';
+import debounce from 'debounce-promise';
+
+const LOGIN_CHECK_DEBOUNCE_TIMEOUT = 1000;
+
+const isNewUserNameFree = ( login )=> {
+  const params = { login }
+  const prom = gql( `
+    query ($login:String!){
+      isLoginAvailable ( login: $login )
+    }`, params )
+  return prom;
+}
+
+const isLoginFree = debounce(  ( userName ) => {
+  return isNewUserNameFree( userName )
+    .then( x => x
+      ? Promise.resolve()
+      : Promise.reject( new Error( 'Username is not available!' ) ) );
+}, LOGIN_CHECK_DEBOUNCE_TIMEOUT );
+
+const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
+
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -24,8 +47,6 @@ const tailFormItemLayout = {
     offset: 0,
   },
 };
-
-const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
 const RegistrationForm = ({onRegister}) => {
 
@@ -159,12 +180,19 @@ const RegistrationForm = ({onRegister}) => {
         name="login"
         label="Nickname"
         tooltip="What do you want others to call you?"
+        hasFeedback
+        validateFirst
         rules={[
           {
             required: true,
             message: 'Please input your nickname!',
             whitespace: false,
           },
+          () => ({
+            validator(_, userName) {
+              return isLoginFree( userName );
+            },
+          }),
         ]}
       >
         <Input />
@@ -174,13 +202,14 @@ const RegistrationForm = ({onRegister}) => {
         key="r6"
         shouldUpdate   // to disable button on validation fail
       {...tailFormItemLayout}>
-      { ({ isFieldsTouched, getFieldsError, setFieldsValue, resetFields })=>    // NOTE: form destructuring
+      { ({ isFieldsTouched, isFieldsValidating, getFieldsError, setFieldsValue, resetFields })=>    // NOTE: form destructuring
           <>
             <Button
               type="primary"
               htmlType="submit"
               disabled={ 
                 !isFieldsTouched(true) ||
+                isFieldsValidating() ||
                 !!getFieldsError().filter(({ errors }) => errors.length).length
               }>
                 Register
@@ -203,6 +232,16 @@ const RegistrationForm = ({onRegister}) => {
 
             <Button type="ghost" htmlType="button" onClick={()=>resetFields()}>
               Reset
+            </Button>
+
+            <Button type="ghost" htmlType="button"
+              onClick={async()=>{
+                const login = 'bc123x'
+                const result = await isNewUserNameFree( login );
+                console.log('T1:', 'result:', result);
+
+              }}>
+              T1
             </Button>
       </>
       }

@@ -28,11 +28,9 @@ const CNormalLoginForm= connect(state=>({
 }))(NormalLoginForm);
 
 
-const CRegistrationForm= connect(state=>({
-  auth: state.promise.auth?.payload,
-  users: state.promise.users?.payload,
-}), dispatch=>({
-  onRegister : (  firstName,lastName, email, login, password )=>dispatch( actionFullRegister( firstName,lastName, email, login, password ) )
+const CRegistrationForm= connect( null, dispatch=>({
+  onRegister : ( firstName,lastName, email, login, password )=>
+                dispatch( actionFullRegister( firstName,lastName, email, login, password ) )
 }))(RegistrationForm);
 
 function App() {
@@ -44,8 +42,10 @@ function App() {
         <Row justify="center" style={{ minHeight: '100vh' }}>
           {/* <Col span={8} > */}
           <Col xs={24} sm={22} md={18} lg={16} xl={12} >
+            {/* <h1 align="center" > Login </h1>
+            <CNormalLoginForm /> */}
 
-            {/* <CNormalLoginForm /> */}
+            <h1 align="center" > Registration </h1>
             <CRegistrationForm />
 
           </Col>

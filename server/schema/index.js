@@ -1,11 +1,18 @@
-const graphql = require( 'graphql' );
-
 const User = require( '../model/User' );
 const Document = require( '../model/Document' );
 const Sheet = require( '../model/Sheet' );
 const Cell = require( '../model/Cell' );
 
-const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema, GraphQLID, GraphQLList, GraphQLNonNull } = graphql;
+const {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLBoolean,
+  GraphQLSchema,
+  GraphQLID,
+  GraphQLList,
+  GraphQLNonNull
+} = require( 'graphql' );
 
 const GraphQLNonNullString = new GraphQLNonNull( GraphQLString )
 const GraphQLNonNullInt = new GraphQLNonNull( GraphQLInt )
@@ -343,11 +350,27 @@ const Query = new GraphQLObjectType( {
         return token;
       }
     },
+    isLoginAvailable : {
+      type : GraphQLBoolean,
+      args : {
+        login : { type: GraphQLNonNullString }
+      },
+      async resolve( parent_, { login } ) {
+        const result = await User.findOne( { login } );
+        return !result
+      }
+    },
+    // NOTE: for development only
     user : {
       type : UserType,
-      args : { id: { type: GraphQLID } },
-      resolve( parent_, args ) {
-        return User.findById( args.id );
+      args : {
+        id    : { type: GraphQLID },
+        login : { type: GraphQLString }
+      },
+      resolve( parent_, { id, login } ) {
+        return id
+                 ? User.findById( id )
+                 : login ? User.findOne( { login } ) : null;
       }
     },
     document : {
