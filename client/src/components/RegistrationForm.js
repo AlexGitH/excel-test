@@ -3,6 +3,26 @@ import { Form, Input, Button, Card, } from 'antd';
 import gql from '../utils/gql';
 import debounce from 'debounce-promise';
 
+const LOGIN_CHECK_DEBOUNCE_TIMEOUT = 1000;
+
+const isNewUserNameFree = ( login )=> {
+  const params = { login }
+  const prom = gql( `
+    query ($login:String!){
+      isLoginAvailable ( login: $login )
+    }`, params )
+  return prom;
+}
+
+const isLoginFree = debounce(  ( userName ) => {
+  return isNewUserNameFree( userName )
+    .then( x => x
+      ? Promise.resolve()
+      : Promise.reject( new Error( 'Username is not available!' ) ) );
+}, LOGIN_CHECK_DEBOUNCE_TIMEOUT );
+
+const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
+
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -27,27 +47,6 @@ const tailFormItemLayout = {
     offset: 0,
   },
 };
-
-const isNewUserNameFree = ( login )=> {
-  const params = { login }
-  const prom = gql( `
-    query ($login:String!){
-      isLoginAvailable ( login: $login )
-    }`, params )
-  return prom;
-}
-
-const isLoginFree = debounce(  ( userName ) => {
-  return isNewUserNameFree( userName )
-    .then( x => x
-      ? Promise.resolve()
-      : Promise.reject(new Error('Username is not available!')));
-}, 1000 );
-
-const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
-
-// DEBUG: 
-// const delay = ms =>new Promise( ok => setTimeout( () => ok( ms ), ms ) )
 
 const RegistrationForm = ({onRegister}) => {
 
