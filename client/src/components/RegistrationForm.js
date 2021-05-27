@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, } from 'antd';
 import gql from '../utils/gql';
+import debounce from 'debounce-promise';
+
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -26,31 +28,7 @@ const tailFormItemLayout = {
   },
 };
 
-const debounce = ( func, wait, timeout=null ) =>
-  (...args) => {
-    const later = function() {
-      timeout = null;
-      func(...args)
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-
-// function debounce(func, wait) {
-//   let timeout;
-//   return function() {
-//     const context = this;
-//     const args = arguments;
-//     const later = function() {
-//       timeout = null;
-//       func.apply(context, args);
-//     };
-//     clearTimeout(timeout);
-//     timeout = setTimeout(later, wait);
-//   };
-// };
-
-const isNewUserNameValid = ( login )=> {
+const isNewUserNameFree = ( login )=> {
   const params = { login }
   const prom = gql( `
     query ($login:String!){
@@ -58,6 +36,13 @@ const isNewUserNameValid = ( login )=> {
     }`, params )
   return prom;
 }
+
+const isLoginFree = debounce(  ( userName ) => {
+  return isNewUserNameFree( userName )
+    .then( x => x
+      ? Promise.resolve()
+      : Promise.reject(new Error('Username is not available!')));
+}, 1000 );
 
 const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#^$&%~<>(){}[\],.+\-*/_=\\]).{8,}$/
 
@@ -206,9 +191,7 @@ const RegistrationForm = ({onRegister}) => {
           },
           () => ({
             validator(_, userName) {
-              return isNewUserNameValid( userName ).then( x => x
-                                                    ? Promise.resolve()
-                                                    : Promise.reject(new Error('Username is not available!')));
+              return isLoginFree( userName );
             },
           }),
         ]}
@@ -255,7 +238,7 @@ const RegistrationForm = ({onRegister}) => {
             <Button type="ghost" htmlType="button"
               onClick={async()=>{
                 const login = 'bc123x'
-                const result = await isNewUserNameValid( login );
+                const result = await isNewUserNameFree( login );
                 console.log('T1:', 'result:', result);
 
               }}>
