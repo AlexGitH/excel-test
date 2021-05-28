@@ -12,6 +12,10 @@ import { Row, Col } from 'antd';
 import RegistrationForm from './components/RegistrationForm';
 // import Layout from 'antd/lib/layout/layout';
 
+// DEBUG: 
+import { cells, recalculateCells } from './utils/testing/cellFormulaCalculations';
+window.TE = { cells, recalculateCells };
+
 // NOTE: for testing only
 const CDocumentEditor = connect(state=>({
   auth: state.promise.auth?.payload,
