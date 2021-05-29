@@ -25,10 +25,15 @@ const cells = {
   row     : 1,
   value   : null,
   expr    : '=C1+1', 
+},
+ E1: {
+  col     : 5,
+  row     : 1,
+  value   : null,
+  expr    : '=C1+D1', 
 }}
 
-function processInputExpr( inputValue ) {
-  // require cells
+function processInputExpr( inputValue, cells ) {
   console.log( 'inputValue', inputValue )
   const relativeVals= inputValue.replace(/^=+/, '' ).match( /(\w+\d+)/g )
   console.log('processInputExpr:', 'vals:', relativeVals.map( x=> cells[x].value ) );
@@ -53,27 +58,30 @@ function processInputExpr( inputValue ) {
     }
 }
 
-function processCell( c ) {
-  const { expr,value } = c
-  if ( expr && !value ) {
-    return {...c, ...processInputExpr( expr ) }   
-  }
-  else {
-    return c;
-  }
-}
-
-function recalculateCells( cls ) {
-  return Object.entries( cls ).reduce((acc,[key,cell])=>( acc[key] = processCell(cell), acc ), {} );
-  // const {newCls, rest} = Object.entries( cls ).reduce( ( acc, [ key, cell ] ) => {
-  //   const newCell = processCell(cell);
-  //   acc[key] = processCell(cell);
-  //   return acc
-  // }, {result:{}, rest} );
+function recalculateCells( cls, res={} ) {
+  const { result, notCalcCells} = Object.entries( cls ).reduce( ( acc, [ key, cell ] ) => {
+    const { expr,value } = cell;
+    if ( expr && !value ) {
+      const newCell = processInputExpr( expr, { ...cls, ...acc.result } )
+      if ( newCell !== cell ) {
+        acc.result[key] = {...cell, ...newCell }   
+      }
+      else {
+        acc.notCalcCells[key] = cell
+      }
+    }
+    else {
+      acc.result[key] = cell;
+    }
+    return acc
+  }, {result:res, notCalcCells:{} } );
+  
+  return Object.keys( notCalcCells ).length > 0 
+    ? recalculateCells( notCalcCells, result )
+    : result;
 }
 
 module.exports = {
   cells, // DEBUG: 
-  processCell,
   recalculateCells,
 }
