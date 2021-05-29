@@ -44,7 +44,7 @@ const cells = {
   value : null,
   expr  : '=C1+D1'
 }
-}
+};
 
 // TODO: think how to improve eval security
 /* eslint { "no-eval" : 0 } */
@@ -57,13 +57,13 @@ function processInputExpr( inputValue, cells_ ) { // NOTE:  cells_ required for 
     : {
       expr  : null,
       value : inputValue
-    }
+    };
 }
 
 function isDependingCellsCalculated( expr, cells ) {
-  const dependingCells = !expr ? null : expr.replace( /^=+/, '' ).match( /(\w+\d+)/g )
+  const dependingCells = !expr ? null : expr.replace( /^=+/, '' ).match( /(\w+\d+)/g );
   console.log( '===:', 'expr:', dependingCells.map( x => `${x}:${cells[x].value != null}` ) );
-  return !dependingCells || dependingCells.every( x => cells[x].value != null )
+  return !dependingCells || dependingCells.every( x => cells[x].value != null );
 }
 
 function recalculateCells( cells, res = {} ) {
@@ -73,15 +73,15 @@ function recalculateCells( cells, res = {} ) {
 
     if ( expr && !value ) {
       if ( isDependingCellsCalculated( expr, allCells ) ) {
-        const newCell = processInputExpr( expr, allCells )
-        acc.result[key] = { ...cell, ...newCell }
+        const newCell = processInputExpr( expr, allCells );
+        acc.result[key] = { ...cell, ...newCell };
       } else {
-        acc.notCalcCells[key] = cell
+        acc.notCalcCells[key] = cell;
       }
     } else {
       acc.result[key] = cell;
     }
-    return acc
+    return acc;
   }, { result: res, notCalcCells: {} } );
 
   return Object.keys( notCalcCells ).length > 0
@@ -92,4 +92,4 @@ function recalculateCells( cells, res = {} ) {
 module.exports = {
   cells, // DEBUG:
   recalculateCells
-}
+};
