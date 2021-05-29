@@ -2,6 +2,18 @@
 //tested in browser
 
 const cells = {
+  A3: {
+  col     : 1,
+  row     : 3,
+  value   : null,
+  expr    : '=A2+A1 + (5-1)',
+},
+  A2: {
+  col     : 1,
+  row     : 2,
+  value   : null,
+  expr    : '=E1+D1*A1',
+},
   A1: {
   col     : 1,
   row     : 1,
@@ -34,19 +46,6 @@ const cells = {
 }}
 
 function processInputExpr( inputValue, cells ) {
-  console.log( 'inputValue', inputValue )
-  const relativeVals= inputValue.replace(/^=+/, '' ).match( /(\w+\d+)/g )
-  console.log('processInputExpr:', 'vals:', relativeVals.map( x=> cells[x].value ) );
-
-  if ( inputValue && inputValue.startsWith('=') ) {
-    if ( relativeVals.some( x=>x==null) ) {
-      return {
-        expr : inputValue,
-        value : null  // to recalculate on next iteration;
-      }
-    }
-
-  }
   return ( inputValue && inputValue.startsWith('=') )
     ? {
       expr : inputValue,
@@ -58,12 +57,21 @@ function processInputExpr( inputValue, cells ) {
     }
 }
 
+function isDependingCellsCalculated( expr, cells ) {
+  const dependingCells= !expr ? null : expr.replace(/^=+/, '' ).match( /(\w+\d+)/g )
+  // console.log('===:', 'expr:', dependingCells.map( x =>`${x}:${cells[x].value != null}` ));
+  return !dependingCells || dependingCells.every( x => cells[x].value != null )
+
+}
+
 function recalculateCells( cls, res={} ) {
   const { result, notCalcCells} = Object.entries( cls ).reduce( ( acc, [ key, cell ] ) => {
     const { expr,value } = cell;
+    const allCells = { ...cls, ...acc.result };
+
     if ( expr && !value ) {
-      const newCell = processInputExpr( expr, { ...cls, ...acc.result } )
-      if ( newCell !== cell ) {
+      if ( isDependingCellsCalculated( expr, allCells ) ) {
+        const newCell = processInputExpr( expr, allCells )
         acc.result[key] = {...cell, ...newCell }   
       }
       else {
