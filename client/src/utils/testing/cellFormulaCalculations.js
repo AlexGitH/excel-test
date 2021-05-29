@@ -45,11 +45,11 @@ const cells = {
   expr    : '=C1+D1', 
 }}
 
-function processInputExpr( inputValue, cells ) {
+function processInputExpr( inputValue, cells_ ) { // NOTE:  cells_ required for eval
   return ( inputValue && inputValue.startsWith('=') )
     ? {
       expr : inputValue,
-      value: eval( inputValue.replace(/^=+/, '' ).replace( /(\w+\d+)/g, 'cells[\'$1\'].value' ) ),
+      value: eval( inputValue.replace(/^=+/, '' ).replace( /(\w+\d+)/g, 'cells_[\'$1\'].value' ) ),
     }
     : {
       expr : null,
@@ -59,15 +59,14 @@ function processInputExpr( inputValue, cells ) {
 
 function isDependingCellsCalculated( expr, cells ) {
   const dependingCells= !expr ? null : expr.replace(/^=+/, '' ).match( /(\w+\d+)/g )
-  // console.log('===:', 'expr:', dependingCells.map( x =>`${x}:${cells[x].value != null}` ));
+  console.log('===:', 'expr:', dependingCells.map( x =>`${x}:${cells[x].value != null}`));
   return !dependingCells || dependingCells.every( x => cells[x].value != null )
-
 }
 
-function recalculateCells( cls, res={} ) {
-  const { result, notCalcCells} = Object.entries( cls ).reduce( ( acc, [ key, cell ] ) => {
+function recalculateCells( cells, res={} ) {
+  const { result, notCalcCells} = Object.entries( cells ).reduce( ( acc, [ key, cell ] ) => {
     const { expr,value } = cell;
-    const allCells = { ...cls, ...acc.result };
+    const allCells = { ...cells, ...acc.result };
 
     if ( expr && !value ) {
       if ( isDependingCellsCalculated( expr, allCells ) ) {
