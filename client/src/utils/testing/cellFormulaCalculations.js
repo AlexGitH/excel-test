@@ -1,4 +1,5 @@
 // DEBUG: USED FOR DEBUG ONLY
+/* eslint { "no-eval" : 0 } */
 //tested in browser
 
 const cells = {
@@ -47,7 +48,6 @@ const cells = {
 };
 
 // TODO: think how to improve eval security
-/* eslint { "no-eval" : 0 } */
 function processInputExpr( inputValue, cells_ ) { // NOTE:  cells_ required for eval
   return ( inputValue && inputValue.startsWith( '=' ) )
     ? {
