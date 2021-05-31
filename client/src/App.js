@@ -14,7 +14,10 @@ import RegistrationForm from './components/RegistrationForm';
 
 // DEBUG: 
 import { cells, recalculateCells } from './utils/testing/cellFormulaCalculations';
+import { lettersToNumber, numberToLetters } from './utils/testing/letterToNumberConverter';
 window.TE = { cells, recalculateCells };
+window.CA = { lettersToNumber, numberToLetters };
+
 
 // NOTE: for testing only
 const CDocumentEditor = connect(state=>({
