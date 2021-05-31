@@ -10,11 +10,11 @@
  */
 const buildColumn = ( dataIndex, renderFn ) => ( {
   dataIndex,
-  width : '60px',
+  width  : '60px',
   title  : dataIndex,
   key    : `col-${dataIndex}`,
   render : ( text, record, index ) => renderFn( text, record, index )
-} )
+} );
 
 /**
  * creates testing sourseData
@@ -28,9 +28,9 @@ const buildData = ( colNum, rowNum ) =>
     Array( colNum ).fill( 0 )
         // eslint-disable-next-line no-sequences
         .reduce( ( ac, _, x ) => ( ac[x] = `${x}-${r}`, ac ) //testing only
-        , {id: r} ) )
+        , { id: r } ) );
 
 module.exports = {
   buildColumn,
   buildData
-}
+};
