@@ -3,18 +3,18 @@
 //tested in browser
 
 const cells = {
-//   A4 : {
-//   col   : 1,
-//   row   : 4,
-//   value : null,
-//   expr  : '=A9+A8'
-// },
-//   A5 : {
-//   col   : 1,
-//   row   : 5,
-//   value : null,
-//   expr  : '=A9+A8 - 1'
-// },
+  A4 : {
+  col   : 1,
+  row   : 4,
+  value : null,
+  expr  : '=A9+A8'
+},
+  A5 : {
+  col   : 1,
+  row   : 5,
+  value : null,
+  expr  : '=A9+A8 - 1'
+},
   A6 : {
   col   : 1,
   row   : 6,
@@ -67,41 +67,38 @@ const cells = {
 
 // TODO: think how to improve eval security
 function processInputExpr( inputValue, cells_ ) { // NOTE:  cells_ required for eval
-  return ( inputValue && inputValue.startsWith( '=' ) )
+  const result = ( inputValue && inputValue.startsWith( '=' ) )
     ? {
       expr  : inputValue,
       // value : eval( inputValue.replace( /^=+/, '' ).replace( /(\w+\d+)/g,  `${cells_[\'$1\'].value' ) )
-      value : eval( inputValue.replace( /^=+/, '' ).replace( /(\w+\d+)/g, 'cells_[\'$1\'].value' ) )
-      // value : eval( inputValue.replace( /^=+/, '' ).replace( /(\w+\d+)/g, 'cells_[\'$1\'] != null ? cells_[\'$1\'].value : ""' ) )
+      // value : eval( inputValue.replace( /^=+/, '' ).replace( /(\w+\d+)/g, 'cells_[\'$1\'].value' ) )
+      value : eval( inputValue.replace( /^=+/, '' ).replace( /(\w+\d+)/g, '(cells_[\'$1\'] != null ? (cells_[\'$1\'].value ? cells_[\'$1\'].value : \'\'): \'\' )' ) )
     }
     : {
       expr  : null,
       value : inputValue
     };
+    return result;
 }
 
 function isDependingCellsCalculated( expr, cells ) {
   const dependingCells = !expr ? null : expr.replace( /^=+/, '' ).match( /(\w+\d+)/g );
-  console.log( '===:', 'expr:', dependingCells.map( x => `${x}:${cells[x]?.value != null}` ) );
-  return !dependingCells || dependingCells.every( x => cells[x] == null || cells[x].value != null );
+  // console.log( '===:', 'expr:', dependingCells.map( x => `${x}:${cells[x]?.value != null}` ) );
+  return !dependingCells || dependingCells.every( x => cells[x] == null || cells[x].value != null || ( cells[x].value == null && cells[x].expr == null ) );
 }
 
-function createEmptyCell( key ) {
-
-}
-
-function normalizeCells( expr, cells ) {
-  const dependingCells = !expr
-  ? null
-  : expr.replace( /^=+/, '' ).match( /(\w+\d+)/g ).reduce( ( ac, key ) => {
-      if ( cells[key] ) {
-        ac[key] = cells[key];
-      } else {
-        ac[key] = createEmptyCell( key );
-      }
-      return ac;
-    }, {} );
-}
+// function normalizeCells( expr, cells ) {
+//   const dependingCells = !expr
+//   ? null
+//   : expr.replace( /^=+/, '' ).match( /(\w+\d+)/g ).reduce( ( ac, key ) => {
+//       if ( cells[key] ) {
+//         ac[key] = cells[key];
+//       } else {
+//         ac[key] = createEmptyCell( key );
+//       }
+//       return ac;
+//     }, {} );
+// }
 
 function recalculateCells( cells, res = {} ) {
   const { result, notCalcCells } = Object.entries( cells ).reduce( ( acc, [ key, cell ] ) => {
